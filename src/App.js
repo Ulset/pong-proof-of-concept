@@ -6,40 +6,45 @@ function App() {
     const y_length = 8
     const x_length = 8
 
+    //Where the ball is heading
     const [y_axis, setY_axis] = useState(4);
     const [x_axis, setX_axis] = useState(4);
 
-    useEffect(()=>{
-        //Game loop
-        const interval = setInterval(()=>{
-            setX_axis(prevXAx => {
-                if(prevXAx >= 7){
-                    return 0
-                }else {
-                    return prevXAx+1
-                }
-            })
-        }, 1000)
-        return ()=>clearInterval(interval)
-    }, [])
+    const [xDelta, setXDelta] = useState(0);
+    const [yDelta, setYDelta] = useState(1);
 
-    let gamestate = []
+    //Game loop
+    useEffect(()=>{
+        //Returns a new axis dependent on delta
+        const returnNewAxis = (prevAx, setDeltaFunc, delta, axisType) => {
+            console.log("---", axisType)
+            console.log("Axis ", axisType, ": ", prevAx)
+            console.log("Delta ", axisType, ": ", delta)
+            if(prevAx > 7 || prevAx < 0){
+                setDeltaFunc(prevDelta => prevDelta*-1)
+                return prevAx-delta
+            }else{
+                return prevAx+delta
+            }
+        }
+
+        const interval = setInterval(()=>{
+            setX_axis(prevXAx => returnNewAxis(prevXAx, setXDelta, xDelta, "X"))
+            setY_axis(prevYAx => returnNewAxis(prevYAx, setYDelta, yDelta, "Y"))
+        }, 3000)
+        return ()=> {clearInterval(interval)}
+    }, [xDelta, yDelta])
+
+    let gameBoard = []
     for (let y = 0; y < y_length; y++) {
         let row = []
         for (let x = 0; x < x_length; x++) {
             const active = y===y_axis && x === x_axis;
             row.push(<Celle active={active} key={`${x}-${y}`}/>)
         }
-        gamestate.push(row)
+        gameBoard.push(<div className="row" key={y}>{row}</div>)
     }
 
-    const gameBoard = gamestate.map((el, index) => {
-        return (
-            <div className="row" key={index}>
-                {el}
-            </div>
-        );
-    })
 
     return (
         <div className="container">
