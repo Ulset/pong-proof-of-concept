@@ -7,7 +7,7 @@ function App() {
     const x_length = 8
 
     //Position of the ball
-    const [y_axis, setY_axis] = useState(2);
+    const [y_axis, setY_axis] = useState(5);
     const [x_axis, setX_axis] = useState(4);
 
     //Where the ball is heading
@@ -51,7 +51,7 @@ function App() {
         gameBoard.push(<div className="row" key={y}>{row}</div>)
     }
 
-
+    //Return statement
     return (
         <div className="container">
             <div className="game_container">
